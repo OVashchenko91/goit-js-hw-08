@@ -1,41 +1,52 @@
+var throttle = require('lodash.throttle');
 
+const feedbackForm = document.querySelector('.feedback-form');
+const emailInput = feedbackForm.querySelector('input[name="email"]');
+const messageTextarea = feedbackForm.querySelector('textarea[name="message"]');
 
-import '../css/common.css';
-import '../css/03-feedback.css';
-import throttle from 'lodash.throttle';
+const FEEDBACK_FORM_STATE_KEY = 'feedback-form-state';
 
-const STORAGE_KEY = 'feedback-form-state';
-const refs = {
-  form: document.querySelector('.feedback-form'),
-  textarea: document.querySelector('.feedback-form textarea'),
-  input: document.querySelector('input'),
+// Функція для збереження стану форми у локальне сховище
+const saveFormStateToLocalStorage = () => {
+  const formState = {
+    email: emailInput.value,
+    message: messageTextarea.value,
+  };
+  localStorage.setItem(FEEDBACK_FORM_STATE_KEY, JSON.stringify(formState));
 };
-const formData = {};
 
-populateTextarea();
-
-refs.form.addEventListener('input', throttle(onTextareaInput, 500));
-
-refs.form.addEventListener('submit', e => {
-  e.preventDefault();
-  e.currentTarget.reset();
-  const objData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  localStorage.removeItem(STORAGE_KEY);
-});
-
-function onTextareaInput(e) {
-  formData[e.target.name] = e.target.value;
-  const stringifiedData = JSON.stringify(formData);
-  localStorage.setItem(STORAGE_KEY, stringifiedData);
-}
-
-function populateTextarea() {
-  const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
-
-  if (savedMessage === null) {
-    //console.log(savedMessage);
-    return;
+// Функція для відновлення стану форми зі сховища
+const restoreFormStateFromLocalStorage = () => {
+  const formStateJson = localStorage.getItem(FEEDBACK_FORM_STATE_KEY);
+  if (formStateJson) {
+    const formState = JSON.parse(formStateJson);
+    emailInput.value = formState.email;
+    messageTextarea.value = formState.message;
   }
-  refs.textarea.value = savedMessage['message'] || '';
-  refs.input.value = savedMessage['email'] || '';
-}
+};
+
+// Відновлення стану форми під час завантаження сторінки
+document.addEventListener('DOMContentLoaded', restoreFormStateFromLocalStorage);
+
+// Збереження стану форми у локальне сховище при введенні даних у поля
+const throttledSaveFormStateToLocalStorage = _.throttle(saveFormStateToLocalStorage, 500);
+feedbackForm.addEventListener('input', throttledSaveFormStateToLocalStorage);
+
+// Очищення форми та сховища при сабміті форми
+feedbackForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  // Очищення полів форми
+  emailInput.value = '';
+  messageTextarea.value = '';
+
+  // Виведення об'єкту з полями email та message та їхніми значеннями у консоль
+  const formState = {
+    email: emailInput.value,
+    message: messageTextarea.value,
+  };
+  console.log(formState);
+
+  // Очищення сховища
+  localStorage.removeItem(FEEDBACK_FORM_STATE_KEY);
+});
