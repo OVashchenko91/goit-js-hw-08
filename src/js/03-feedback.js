@@ -5,7 +5,6 @@ const emailInput = feedbackForm.querySelector('input[name="email"]');
 const messageTextarea = feedbackForm.querySelector('textarea[name="message"]');
 
 const FEEDBACK_FORM_STATE_KEY = 'feedback-form-state';
-
 // Функція для збереження стану форми у локальне сховище
 const saveFormStateToLocalStorage = () => {
   const formState = {
