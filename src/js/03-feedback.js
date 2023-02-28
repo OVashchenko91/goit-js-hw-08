@@ -1,51 +1,59 @@
-var throttle = require('lodash.throttle');
+import throttle from 'lodash.throttle';
 
-const feedbackForm = document.querySelector('.feedback-form');
-const emailInput = feedbackForm.querySelector('input[name="email"]');
-const messageTextarea = feedbackForm.querySelector('textarea[name="message"]');
-
-const FEEDBACK_FORM = 'feedback-form-state';
-// збереження стану форми у локальне сховище
-const saveFormStateToLocalStorage = () => {
-  const formState = {
-    email: emailInput.value,
-    message: messageTextarea.value,
-  };
-  localStorage.setItem(FEEDBACK_FORM, JSON.stringify(formState));
+const refs = {
+  form: document.querySelector('.feedback-form'),
+  email: document.querySelector('input[type="email"]'),
+  message: document.querySelector('textarea[name="message"]'),
 };
 
-//відновлення стану форми зі сховища
-const restoreFormStateFromLocalStorage = () => {
-  const formStateJson = localStorage.getItem(FEEDBACK_FORM);
-  if (formStateJson) {
-    const formState = JSON.parse(formStateJson);
-    emailInput.value = formState.email;
-    messageTextarea.value = formState.message;
+refs.form.addEventListener('input', throttle(onInput, 500));
+refs.form.addEventListener('submit', onFormSubmit);
+
+const STORAGE_INPUT_KEY = 'feedback-form-state';
+
+function onInput(e) {
+  const userDetails = JSON.parse(localStorage.getItem(STORAGE_INPUT_KEY)) || {};
+  console.log(userDetails);
+  userDetails[e.target.name] = e.target.value;
+
+  localStorage.setItem(STORAGE_INPUT_KEY, JSON.stringify(userDetails));
+}
+
+const saveLocalItems = localStorage.getItem(STORAGE_INPUT_KEY);
+const parsSaveLocalItems = JSON.parse(saveLocalItems);
+
+function getLocalStorageItems() {
+  if (saveLocalItems) {
+    !parsSaveLocalItems.email
+      ? ''
+      : (refs.email.value = parsSaveLocalItems.email);
+    !parsSaveLocalItems.message
+      ? ''
+      : (refs.message.value = parsSaveLocalItems.message);
   }
-};
+}
 
-// Відновлення стану форми під час завантаження сторінки
-document.addEventListener('DOMContentLoaded', restoreFormStateFromLocalStorage);
+getLocalStorageItems();
 
-// Збереження стану форми у локальне сховище при введенні даних у поля
-const throttledSaveFormStateToLocalStorage = _.throttle(saveFormStateToLocalStorage, 500);
-feedbackForm.addEventListener('input', throttledSaveFormStateToLocalStorage);
+function onFormSubmit(e) {
+  e.preventDefault();
 
-// Очищення форми та сховища при сабміті форми
-feedbackForm.addEventListener('submit', (event) => {
-  event.preventDefault();
+  const {
+    elements: { email, message },
+  } = e.currentTarget;
 
-  // Очищення полів форми
-  emailInput.value = '';
-  messageTextarea.value = '';
+  if (email.value === '' || message.value === '') {
+    return alert('Введіть всі поля форми!!!');
+  }
 
-  // Виведення email та message та їхніми значеннями у консоль
-  const formState = {
-    email: emailInput.value,
-    message: messageTextarea.value,
-  };
-  console.log(formState);
+  const formElDetails = { email: email.value, message: message.value };
+  console.log(formElDetails);
 
-  // Очищення
-  localStorage.removeItem(FEEDBACK_FORM);
-});
+  e.currentTarget.reset();
+
+  removeStorageItems();
+}
+
+function removeStorageItems() {
+  localStorage.removeItem(STORAGE_INPUT_KEY);
+}
