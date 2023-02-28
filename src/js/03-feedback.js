@@ -53,7 +53,6 @@ function onFormSubmit(e) {
 
   removeStorageItems();
 }
-
 function removeStorageItems() {
   localStorage.removeItem(STORAGE_INPUT_KEY);
 }
