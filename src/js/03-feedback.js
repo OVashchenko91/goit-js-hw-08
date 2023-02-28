@@ -39,7 +39,7 @@ feedbackForm.addEventListener('submit', (event) => {
   emailInput.value = '';
   messageTextarea.value = '';
 
-  // Виведення об'єкту з полями email та message та їхніми значеннями у консоль
+  // Виведення email та message та їхніми значеннями у консоль
   const formState = {
     email: emailInput.value,
     message: messageTextarea.value,
