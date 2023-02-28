@@ -46,6 +46,6 @@ feedbackForm.addEventListener('submit', (event) => {
   };
   console.log(formState);
 
-  // Очищення сховища
+  // Очищення
   localStorage.removeItem(FEEDBACK_FORM);
 });
