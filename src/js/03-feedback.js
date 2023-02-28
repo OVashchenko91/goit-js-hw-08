@@ -4,19 +4,19 @@ const feedbackForm = document.querySelector('.feedback-form');
 const emailInput = feedbackForm.querySelector('input[name="email"]');
 const messageTextarea = feedbackForm.querySelector('textarea[name="message"]');
 
-const FEEDBACK_FORM_STATE_KEY = 'feedback-form-state';
-// Функція для збереження стану форми у локальне сховище
+const FEEDBACK_FORM = 'feedback-form-state';
+// збереження стану форми у локальне сховище
 const saveFormStateToLocalStorage = () => {
   const formState = {
     email: emailInput.value,
     message: messageTextarea.value,
   };
-  localStorage.setItem(FEEDBACK_FORM_STATE_KEY, JSON.stringify(formState));
+  localStorage.setItem(FEEDBACK_FORM, JSON.stringify(formState));
 };
 
-// Функція для відновлення стану форми зі сховища
+//відновлення стану форми зі сховища
 const restoreFormStateFromLocalStorage = () => {
-  const formStateJson = localStorage.getItem(FEEDBACK_FORM_STATE_KEY);
+  const formStateJson = localStorage.getItem(FEEDBACK_FORM);
   if (formStateJson) {
     const formState = JSON.parse(formStateJson);
     emailInput.value = formState.email;
@@ -47,5 +47,5 @@ feedbackForm.addEventListener('submit', (event) => {
   console.log(formState);
 
   // Очищення сховища
-  localStorage.removeItem(FEEDBACK_FORM_STATE_KEY);
+  localStorage.removeItem(FEEDBACK_FORM);
 });
