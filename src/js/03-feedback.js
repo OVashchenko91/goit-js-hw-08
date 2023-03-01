@@ -10,8 +10,8 @@ refs.form.addEventListener('input', throttle(onInput, 500));
 refs.form.addEventListener('submit', onFormSubmit);
 
 const STORAGE_INPUT_KEY = 'feedback-form-state';
-
-function onInput(e) {
+//Коли користувач вводить інформацію у форму, функція викликається із затримкою 500 мс за допомогою бібліотеки 
+function onInput(e) { // функція зберігає дані, введені користувачем, у локальному сховищі під ключем 
   const userDetails = JSON.parse(localStorage.getItem(STORAGE_INPUT_KEY)) || {};
   console.log(userDetails);
   userDetails[e.target.name] = e.target.value;
@@ -22,7 +22,7 @@ function onInput(e) {
 const saveLocalItems = localStorage.getItem(STORAGE_INPUT_KEY);
 const parsSaveLocalItems = JSON.parse(saveLocalItems);
 
-function getLocalStorageItems() {
+function getLocalStorageItems() { //функція перевіряє, чи є збережені дані в локальному сховищі, і якщо так, то встановлює значення полів введення на збережені значення.
   if (saveLocalItems) {
     !parsSaveLocalItems.email
       ? ''
@@ -35,7 +35,7 @@ function getLocalStorageItems() {
 
 getLocalStorageItems();
 
-function onFormSubmit(e) {
+function onFormSubmit(e) {//перевіряє чи внесені поля, якщо ні виводить повідомлення
   e.preventDefault();
 
   const {
@@ -43,7 +43,7 @@ function onFormSubmit(e) {
   } = e.currentTarget;
 
   if (email.value === '' || message.value === '') {
-    return alert('Введіть всі поля форми!!!');
+    return alert('Введіть всі поля форми!');
   }
 
   const formElDetails = { email: email.value, message: message.value };
@@ -51,8 +51,10 @@ function onFormSubmit(e) {
 
   e.currentTarget.reset();
 
-  removeStorageItems();
+  removeStorageItems(); 
+
+
 }
-function removeStorageItems() {
+function removeStorageItems() { // функція, яка видаляє збережені дані з локального сховища.
   localStorage.removeItem(STORAGE_INPUT_KEY);
 }
